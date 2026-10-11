@@ -12,6 +12,7 @@ from .config import ConfigError, load_config
 from .evidence import EvidenceError, verify_chain, verify_file
 from .loader import InputError
 from .models import SEVERITY_ORDER
+from .normalize import strip_accents
 from .report.common import SEVERITIES, categories, severity_totals
 
 EXIT_OK, EXIT_FINDINGS, EXIT_ERROR = 0, 2, 1
@@ -47,7 +48,8 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--as-of", type=_date, help="fecha de corte (AAAA-MM-DD)")
     r.add_argument(
         "--fail-on",
-        choices=[s.lower() for s in SEVERITIES],
+        type=lambda v: strip_accents(v).lower(),
+        choices=[strip_accents(s).lower() for s in SEVERITIES],
         help="termina con código 2 si hay hallazgos de esta severidad o mayor (útil en CI)",
     )
 
@@ -109,7 +111,9 @@ def cmd_reconcile(args) -> int:
     print(f"Cabeza del registro (guárdela aparte para detectar truncamiento): {out.evidence_head}")
 
     if args.fail_on:
-        limit = SEVERITY_ORDER[args.fail_on.upper()]
+        limit = next(
+            SEVERITY_ORDER[s] for s in SEVERITIES if strip_accents(s).lower() == args.fail_on
+        )
         if any(SEVERITY_ORDER[f.severity] <= limit for f in res.findings):
             return EXIT_FINDINGS
     return EXIT_OK

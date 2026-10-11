@@ -39,7 +39,7 @@ def render_html(result: Result, run_id: str, generated_at: datetime | None = Non
         severities=SEVERITIES,
         severity_class=SEVERITY_CLASS,
         columns=COLUMNS,
-        nowrap={"employee_id", "account", "termination_date", "last_logon"},
+        nowrap={"employee_id", "employee_name", "account", "termination_date", "last_logon"},
         messages=key_messages(result),
     )
 

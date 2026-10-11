@@ -23,6 +23,7 @@ SEVERITY_FILL = {
     "BAJA": PatternFill("solid", fgColor="ECECEA"),
 }
 MAX_WIDTH = 60
+WRAP_COLUMNS = {"Detalle", "Motivo", "Nombre", "Empleado"}
 
 
 def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list]) -> None:
@@ -33,7 +34,8 @@ def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list]) 
     for r, values in enumerate(rows, start=start_row + 1):
         for c, value in enumerate(values, start=1):
             cell = ws.cell(row=r, column=c, value=value)
-            cell.alignment = Alignment(vertical="top")
+            wrap = headers[c - 1] in WRAP_COLUMNS
+            cell.alignment = Alignment(vertical="top", wrap_text=wrap)
             if headers[c - 1] == "Severidad" and value in SEVERITY_FILL:
                 cell.fill = SEVERITY_FILL[value]
                 cell.font = Font(bold=True)
@@ -42,6 +44,17 @@ def _table(ws: Worksheet, start_row: int, headers: list[str], rows: list[list]) 
         ws.auto_filter.ref = f"A{start_row}:{last}{start_row + len(rows)}"
     ws.freeze_panes = ws.cell(row=start_row + 1, column=1)
     _autosize(ws, start_row)
+    _print_setup(ws, start_row)
+
+
+def _print_setup(ws: Worksheet, header_row: int) -> None:
+    """Horizontal, ajustado al ancho de la página y con encabezado repetido."""
+    ws.page_setup.orientation = "landscape"
+    ws.page_setup.paperSize = ws.PAPERSIZE_A4
+    ws.sheet_properties.pageSetUpPr.fitToPage = True
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 0
+    ws.print_title_rows = f"{header_row}:{header_row}"
 
 
 def _autosize(ws: Worksheet, start_row: int = 1) -> None:
@@ -73,7 +86,7 @@ def write_excel(result: Result, path: Path, run_id: str) -> Path:
     ]
     for i, (k, v) in enumerate(meta, start=3):
         ws.cell(row=i, column=1, value=k).font = Font(bold=True)
-        ws.cell(row=i, column=2, value=v)
+        ws.cell(row=i, column=2, value=v).alignment = Alignment(horizontal="left")
     row = len(meta) + 4
     ws.cell(row=row, column=1, value="Mensajes clave").font = Font(bold=True)
     for msg in key_messages(result):
@@ -110,7 +123,7 @@ def write_excel(result: Result, path: Path, run_id: str) -> Path:
         if c.skipped:
             sheet["A5"] = f"Regla omitida: {c.skipped}"
             continue
-        rows = [[cell_value(f, attr) for _, attr in cols] for f in c.findings]
+        rows = [[cell_value(f, attr, None) for _, attr in cols] for f in c.findings]
         if not rows:
             sheet["A5"] = "Sin hallazgos."
         _table(sheet, 5, [h for h, _ in cols], rows)

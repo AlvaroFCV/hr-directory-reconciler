@@ -51,6 +51,7 @@ tr:last-child td { border-bottom: 0; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 td.zero { color: var(--muted); }
 td.nw { white-space: nowrap; }
+td.src { color: var(--muted); font-size: 12px; min-width: 150px; }
 .barcell { width: 26%; min-width: 140px; }
 .bar { display: flex; align-items: center; gap: 8px; }
 .bar span.fill { display: block; height: 12px; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 2px; }
@@ -144,6 +145,7 @@ footer { margin-top: 48px; color: var(--muted); font-size: 12px; border-top: 1px
       {% for header, attr in columns[c.rule.code] %}
       {% if attr == 'severity' %}<td><span class="sev {{ severity_class[f.severity] }}">{{ f.severity|capitalize }}</span></td>
       {% elif attr == 'days' %}<td class="num">{{ cell_value(f, attr) }}</td>
+      {% elif attr == 'source' %}<td class="src">{{ cell_value(f, attr) }}</td>
       {% elif attr in nowrap %}<td class="nw">{{ cell_value(f, attr) }}</td>
       {% else %}<td>{{ cell_value(f, attr) }}</td>{% endif %}
       {% endfor %}

@@ -92,12 +92,12 @@ SHEET_NAMES = {
 }
 
 
-def cell_value(f: Finding, attr: str):
+def cell_value(f: Finding, attr: str, empty_days: str | None = "—"):
     value = getattr(f, attr)
     if attr == "issue":
         return ISSUE_LABELS.get(value, value)
     if value is None:
-        return "" if attr != "days" else "—"
+        return empty_days if attr == "days" else ""
     return value
 
 

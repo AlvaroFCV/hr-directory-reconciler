@@ -85,7 +85,8 @@ def test_runs_never_overwrite_reports(workspace):
 
 
 def test_fail_on_threshold(workspace):
-    assert reconcile(workspace, "--fail-on", "crítica") == 2
+    assert reconcile(workspace, "--fail-on", "critica") == 2
+    assert reconcile(workspace, "--fail-on", "CRÍTICA") == 2  # con o sin tilde
 
 
 def test_missing_last_logon_column_is_not_an_error(workspace, capsys):
