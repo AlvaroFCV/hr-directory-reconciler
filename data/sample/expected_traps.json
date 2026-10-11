@@ -1,0 +1,252 @@
+{
+  "_note": "Datos ficticios. Qué debe detectar cada regla con la configuración de ejemplo.",
+  "as_of": "2026-10-01",
+  "seed": 42,
+  "hr_rows": 504,
+  "directory_rows": 499,
+  "R1": {
+    "critical": [
+      "024148",
+      "027619",
+      "033728",
+      "051709",
+      "053727",
+      "057873",
+      "064646",
+      "067207",
+      "085076",
+      "087413",
+      "089702",
+      "096360"
+    ],
+    "high": [
+      "016328",
+      "063580",
+      "090477",
+      "096030"
+    ]
+  },
+  "R2": [
+    "011814",
+    "024969",
+    "050921",
+    "052629",
+    "054511",
+    "056897",
+    "079647",
+    "088186"
+  ],
+  "R2b": [
+    "016890",
+    "017142",
+    "022465",
+    "062393"
+  ],
+  "R3": {
+    "title": [
+      "010356",
+      "016203",
+      "019465",
+      "021214",
+      "039684",
+      "055921",
+      "065260",
+      "065304",
+      "095405",
+      "098117"
+    ],
+    "department": [
+      "014979",
+      "015125",
+      "018038",
+      "038346",
+      "085886",
+      "089250",
+      "090899",
+      "090925",
+      "095924"
+    ],
+    "manager": [
+      "001693",
+      "024329",
+      "039393",
+      "045742",
+      "053978",
+      "087898"
+    ],
+    "email": [
+      "015184",
+      "021461",
+      "049738",
+      "052747",
+      "076543",
+      "085182",
+      "087154"
+    ]
+  },
+  "R4": [
+    "contratista.ext01",
+    "ex.consultor",
+    "ex.pasante2023",
+    "lsimbana",
+    "pruebas.qa",
+    "temporal.bodega",
+    "wvaca"
+  ],
+  "R4_enabled": [
+    "contratista.ext01",
+    "ex.consultor",
+    "lsimbana",
+    "pruebas.qa",
+    "wvaca"
+  ],
+  "R5": {
+    "duplicate_hr_id": [
+      "054674",
+      "083960"
+    ],
+    "multiple_enabled_accounts": [
+      "046061",
+      "096881"
+    ],
+    "duplicate_email_hr": [
+      "rocio.herrera@comercialandina.example",
+      "tatiana.herrera@comercialandina.example"
+    ],
+    "duplicate_email_directory": [
+      "veronica.ordonez@comercialandina.example"
+    ],
+    "missing_employee_id": 1,
+    "unknown_status": [
+      "098310"
+    ],
+    "matched_by_email": [
+      "040529",
+      "051343",
+      "078165"
+    ],
+    "terminated_without_date": [
+      "096030"
+    ],
+    "status_date_inconsistent": [
+      "087413"
+    ]
+  },
+  "R6": [
+    "aalban",
+    "dtoapanta",
+    "jtapia",
+    "sguaman",
+    "syepez"
+  ],
+  "R7": [
+    "achavez",
+    "bordonez",
+    "drodriguez",
+    "dsarmiento",
+    "gguaman",
+    "imaldonado",
+    "jcalderon",
+    "jponce",
+    "oquinonez",
+    "tquinonez"
+  ],
+  "excluded": {
+    "service_accounts": [
+      "admin.redes",
+      "admin.ti",
+      "backup.agent",
+      "sa_scanner",
+      "scanner.piso3",
+      "svc-sql01",
+      "svc_backup",
+      "svc_nomina"
+    ],
+    "special_accounts": [
+      "recepcion.general",
+      "sala.reuniones"
+    ],
+    "no_account_required": [
+      "018342",
+      "035741",
+      "060177",
+      "071697",
+      "075364",
+      "083719"
+    ],
+    "scheduled_termination": [
+      "014399",
+      "082156",
+      "090070"
+    ],
+    "scheduled_hire": [
+      "022906",
+      "047088"
+    ]
+  },
+  "no_findings": [
+    "001235",
+    "003260",
+    "003441",
+    "003981",
+    "005224",
+    "007014",
+    "007505",
+    "007658",
+    "008686",
+    "008869",
+    "013245",
+    "015064",
+    "015168",
+    "016202",
+    "018659",
+    "020603",
+    "020762",
+    "021578",
+    "021585",
+    "025356",
+    "026863",
+    "026971",
+    "028082",
+    "029074",
+    "029534",
+    "029647",
+    "034425",
+    "034612",
+    "035803",
+    "036112",
+    "036446",
+    "037624",
+    "037749",
+    "038128",
+    "038627",
+    "040537",
+    "041037",
+    "041038",
+    "041683",
+    "042015",
+    "042853",
+    "043101",
+    "045424",
+    "048823",
+    "053227",
+    "058433",
+    "058963",
+    "059515",
+    "061910",
+    "063094",
+    "064896",
+    "067263",
+    "069656",
+    "069919",
+    "071010",
+    "075925",
+    "076750",
+    "077865",
+    "084627",
+    "087364",
+    "091342",
+    "092395",
+    "094244"
+  ]
+}
