@@ -42,7 +42,9 @@ def finding(
         severity=severity,
         issue=issue,
         detail=detail,
-        employee_id=employee.employee_id.strip() if employee else extra.pop("employee_id", ""),
+        employee_id=(employee.id_key or employee.employee_id.strip())
+        if employee
+        else extra.pop("employee_id", ""),
         employee_name=employee.name if employee else extra.pop("employee_name", ""),
         account=account.account if isinstance(account, Account) else (account or ""),
         last_logon=_fmt_dt(account.last_logon) if isinstance(account, Account) else "",

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conciliación de accesos {{ result.as_of }}</title>
+<style>
+:root {
+  --surface: #fcfcfb; --surface-2: #f3f2ee; --border: #dedcd5;
+  --text: #0b0b0b; --text-2: #52514e; --muted: #77756f;
+  --bar: #2a78d6;
+  --critical: #d03b3b; --serious: #ec835a; --warning: #fab219; --low: #8a8984;
+  --accent: #1f4e8c;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #1a1a19; --surface-2: #242422; --border: #3a3936;
+    --text: #f0efec; --text-2: #c3c2b7; --muted: #9a998f; --bar: #3987e5; --accent: #8fb5ec;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--surface); color: var(--text);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 19px; margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 16px; margin: 0; }
+.sub { color: var(--text-2); margin: 0; }
+.banner { margin: 16px 0 0; padding: 8px 12px; border-left: 3px solid var(--accent);
+  background: var(--surface-2); color: var(--text-2); font-size: 13px; }
+.meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 4px 24px;
+  margin-top: 16px; font-size: 13px; color: var(--text-2); }
+.meta b { color: var(--text); font-weight: 600; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 24px; }
+.tile { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; background: var(--surface); }
+.tile .num { font-size: 30px; font-weight: 650; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.tile .lbl { color: var(--text-2); font-size: 13px; margin-top: 4px; display: flex; gap: 6px; align-items: center; }
+.messages { margin: 0; padding-left: 20px; }
+.messages li { margin: 4px 0; }
+.sev { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.sev::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--c); }
+.sev.critical { --c: var(--critical); } .sev.serious { --c: var(--serious); }
+.sev.warning { --c: var(--warning); } .sev.low { --c: var(--low); }
+.sev.critical::before { border-radius: 50%; }
+.sev.serious::before { transform: rotate(45deg); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--surface-2); font-weight: 600; color: var(--text-2); position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.zero { color: var(--muted); }
+td.nw { white-space: nowrap; }
+.barcell { width: 26%; min-width: 140px; }
+.bar { display: flex; align-items: center; gap: 8px; }
+.bar span.fill { display: block; height: 12px; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 2px; }
+.bar span.val { font-variant-numeric: tabular-nums; color: var(--text-2); font-size: 12px; }
+a { color: var(--accent); }
+section.cat { margin-top: 28px; }
+.cat-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.cat-desc { color: var(--text-2); margin: 6px 0 4px; }
+.reco { margin: 0 0 10px; font-size: 13px; }
+.reco b { color: var(--text); }
+.empty, .skipped { color: var(--text-2); font-style: italic; margin: 8px 0; }
+code { font-size: 12px; word-break: break-all; }
+footer { margin-top: 48px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+@media print {
+  main { max-width: none; padding: 0; }
+  th { position: static; }
+  section.cat { break-inside: auto; }
+  h2 { break-after: avoid; }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Informe de conciliación de accesos</h1>
+  <p class="sub">Nómina de RR.HH. frente a directorio de usuarios · fecha de corte <b>{{ result.as_of }}</b></p>
+  <p class="banner">Herramienta de solo lectura: este informe se generó a partir de archivos exportados y no modificó ningún sistema.</p>
+  <div class="meta">
+    <div>Generado: <b>{{ generated_at }}</b></div>
+    <div>Ejecución: <b>{{ run_id }}</b></div>
+    <div>Versión: <b>hrrecon {{ version }}</b></div>
+    {% for name, value in result.stats.items() %}
+    <div>{{ name }}: <b>{{ value }}</b></div>
+    {% endfor %}
+  </div>
+</header>
+
+<h2>Resumen ejecutivo</h2>
+<div class="tiles">
+  <div class="tile"><div class="num">{{ total }}</div><div class="lbl">Hallazgos totales</div></div>
+  {% for sev in severities %}
+  <div class="tile"><div class="num">{{ totals[sev] }}</div>
+    <div class="lbl"><span class="sev {{ severity_class[sev] }}">{{ sev|capitalize }}</span></div></div>
+  {% endfor %}
+</div>
+<ul class="messages" style="margin-top:16px">
+  {% for m in messages %}<li>{{ m }}</li>{% endfor %}
+</ul>
+
+<h2>Hallazgos por categoría</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Regla</th><th>Categoría</th>
+    {% for sev in severities %}<th class="num">{{ sev|capitalize }}</th>{% endfor %}
+    <th class="num">Total</th><th>Distribución</th></tr></thead>
+  <tbody>
+  {% for c in categories %}
+  <tr>
+    <td>{{ c.rule.code }}</td>
+    <td><a href="#{{ c.rule.code }}">{{ c.rule.title }}</a>{% if c.skipped %} <i>(omitida)</i>{% endif %}</td>
+    {% for sev in severities %}<td class="num{% if not c.counts[sev] %} zero{% endif %}">{{ c.counts[sev] }}</td>{% endfor %}
+    <td class="num"><b>{{ c.total }}</b></td>
+    <td class="barcell" title="{{ c.rule.title }}: {{ c.total }}">
+      {% if c.total %}<div class="bar"><span class="fill" style="width: {{ (c.total / max_total * 100)|round(1) }}%"></span><span class="val">{{ c.total }}</span></div>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% if result.skipped_rules %}
+<p class="skipped">Reglas omitidas: {% for code, why in result.skipped_rules.items() %}{{ code }} — {{ why }}{% if not loop.last %}; {% endif %}{% endfor %}</p>
+{% endif %}
+
+<h2>Detalle</h2>
+{% for c in categories %}
+<section class="cat" id="{{ c.rule.code }}">
+  <div class="cat-head"><h3>{{ c.rule.code }} · {{ c.rule.title }}</h3><span class="sub">{{ c.total }} hallazgo(s)</span></div>
+  <p class="cat-desc">{{ c.rule.description }}</p>
+  <p class="reco"><b>Acción recomendada:</b> {{ c.rule.recommendation }}</p>
+  {% if c.skipped %}
+  <p class="skipped">Regla omitida: {{ c.skipped }}</p>
+  {% elif not c.findings %}
+  <p class="empty">Sin hallazgos.</p>
+  {% else %}
+  <div class="table-wrap"><table>
+    <thead><tr>{% for header, _ in columns[c.rule.code] %}<th{% if header.startswith('Días') %} class="num"{% endif %}>{{ header }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for f in c.findings %}
+    <tr>
+      {% for header, attr in columns[c.rule.code] %}
+      {% if attr == 'severity' %}<td><span class="sev {{ severity_class[f.severity] }}">{{ f.severity|capitalize }}</span></td>
+      {% elif attr == 'days' %}<td class="num">{{ cell_value(f, attr) }}</td>
+      {% elif attr in nowrap %}<td class="nw">{{ cell_value(f, attr) }}</td>
+      {% else %}<td>{{ cell_value(f, attr) }}</td>{% endif %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% endif %}
+</section>
+{% endfor %}
+
+<h2>Exclusiones aplicadas</h2>
+<p class="cat-desc">Elementos que no se evaluaron en algunas reglas, según la configuración. Se listan para dejar rastro auditable.</p>
+{% if result.exclusions %}
+<div class="table-wrap"><table>
+  <thead><tr><th>Tipo</th><th>Identificador</th><th>Nombre</th><th>Motivo</th><th>Reglas afectadas</th></tr></thead>
+  <tbody>
+  {% for x in result.exclusions %}
+  <tr><td>{{ x.kind }}</td><td>{{ x.identifier }}</td><td>{{ x.name }}</td><td>{{ x.reason }}</td><td>{{ x.scope }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% else %}<p class="empty">Ninguna.</p>{% endif %}
+
+<h2>Archivos de entrada</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Rol</th><th>Archivo</th><th class="num">Filas</th><th class="num">Tamaño (bytes)</th><th>SHA-256</th></tr></thead>
+  <tbody>
+  {% for i in result.inputs %}
+  <tr><td>{{ i.role }}</td><td>{{ i.path|basename }}</td><td class="num">{{ i.rows }}</td><td class="num">{{ i.size }}</td><td><code>{{ i.sha256 }}</code></td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>
+{% if result.warnings %}
+<p class="skipped">Advertencias de lectura: {{ result.warnings|join('; ') }}</p>
+{% endif %}
+
+<footer>
+  El hash SHA-256 de este informe y de los archivos de entrada se registra en el registro de evidencia encadenado.
+  Para comprobar que el informe no fue modificado: <code>hrrecon verify &lt;este-archivo&gt; --log &lt;evidence_log.jsonl&gt;</code>.
+</footer>
+</main>
+</body>
+</html>

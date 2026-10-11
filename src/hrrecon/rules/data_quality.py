@@ -15,7 +15,7 @@ def run(ctx: Context) -> list:
     employees = ctx.data.employees
 
     # Códigos de empleado duplicados en nómina
-    for _key, rows in sorted(ctx.rows_by_id.items()):
+    for key, rows in sorted(ctx.rows_by_id.items()):
         if len(rows) > 1:
             names = " / ".join(dict.fromkeys(r.name for r in rows))
             filas = ", ".join(str(r.row) for r in rows)
@@ -26,7 +26,7 @@ def run(ctx: Context) -> list:
                     "duplicate_hr_id",
                     f"El código aparece en {len(rows)} filas de nómina ({filas}). "
                     "Se usó la fila vigente para conciliar.",
-                    employee_id=rows[0].employee_id.strip(),
+                    employee_id=key,
                     employee_name=names,
                     source=f"nómina filas {filas}",
                 )
@@ -122,7 +122,7 @@ def run(ctx: Context) -> list:
                     "MEDIA",
                     "duplicate_email_hr",
                     f"El correo está asignado a {len(people)} empleados en nómina.",
-                    employee_id=", ".join(p.employee_id.strip() for p in people.values()),
+                    employee_id=", ".join(p.id_key or "(sin código)" for p in people.values()),
                     employee_name=" / ".join(p.name for p in people.values()),
                     hr_value=email,
                     source="nómina filas " + ", ".join(str(p.row) for p in people.values()),
