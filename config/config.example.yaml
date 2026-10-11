@@ -1,0 +1,72 @@
+# Configuración de hrrecon / hrrecon configuration
+# Las rutas relativas se resuelven respecto a la carpeta de ESTE archivo.
+# Relative paths are resolved against the folder of THIS file.
+
+hr:
+  file: ../data/sample/nomina.xlsx
+  sheet: Empleados                 # opcional en Excel (por defecto, la primera hoja)
+  # Mapeo campo_canónico: "Nombre de la columna en la exportación".
+  # Los encabezados se comparan sin distinguir mayúsculas ni espacios extremos.
+  columns:
+    employee_id: "Código Empleado"   # obligatorio
+    status: "Estado"                 # obligatorio
+    first_name: "Nombres"
+    last_name: "Apellidos"
+    title: "Cargo"
+    department: "Departamento"
+    manager_id: "Código Jefe"
+    email: "Correo Corporativo"
+    hire_date: "Fecha Ingreso"
+    termination_date: "Fecha Salida"
+  status_values:
+    active: ["activo", "a", "vigente"]
+    terminated: ["baja", "inactivo", "cesante", "desvinculado"]
+
+directory:
+  file: ../data/sample/directorio.csv
+  encoding: utf-8-sig
+  delimiter: ";"
+  columns:
+    account: "sAMAccountName"        # obligatorio
+    enabled: "Enabled"               # obligatorio
+    employee_id: "employeeID"
+    display_name: "DisplayName"
+    title: "Title"
+    department: "Department"
+    manager: "Manager"               # admite DN (CN=...,OU=...), cuenta o código de empleado
+    email: "mail"
+    last_logon: "LastLogonDate"      # opcional: si falta, R6 y R7 se omiten sin error
+  enabled_values: ["true", "1", "habilitado", "enabled"]
+
+matching:
+  keys: [employee_id, email]       # orden de emparejamiento: primero ID, luego correo
+  id_format:
+    zfill: 6                        # '4512' -> '004512'
+    strip_non_digits: false
+    uppercase: true
+    remove_chars: " -."
+
+normalization:
+  strip_accents: true               # 'Gestión' == 'GESTION'
+  casefold: true
+  collapse_spaces: true
+
+compare_attributes: [title, department, manager, email]
+
+exclusions:
+  service_accounts:                 # nunca se reportan como huérfanas ni sin uso
+    account_patterns: ["^svc[_-]", "^sa_", "^admin\\."]
+    accounts: ["scanner.piso3", "backup.agent"]
+  accounts: ["recepcion.general", "sala.reuniones"]   # cuentas especiales: fuera de todas las reglas
+  employee_ids: []                                    # empleados fuera de todas las reglas
+  titles_no_account_required: ["Pasante", "Practicante"]   # se omiten solo de R2
+
+rules:
+  as_of: null                        # fecha de corte (AAAA-MM-DD); null = hoy
+  termination_escalation_days: 7     # R1: más días que esto desde la baja => CRÍTICA
+  stale_account_days: 90             # R7: cuentas habilitadas sin inicio de sesión en N días
+
+output:
+  dir: ../output
+  evidence_log: ../output/evidence_log.jsonl
+  basename: reporte_conciliacion
